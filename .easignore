@@ -1,0 +1,12 @@
+# EAS Build upload ignore list (similar to .gitignore).
+
+# Cursor / AI tooling (not needed for builds; may contain symlinks on Windows)
+.cursor/
+.claude/
+.agents/
+agent-transcripts/
+
+# Planning/spec artifacts
+openspec/
+.planning/
+
