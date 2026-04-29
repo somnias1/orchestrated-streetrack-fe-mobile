@@ -195,7 +195,10 @@ src/
 
 ## Risks / Trade-offs
 
-- **Risk**: NativeWind v4 + Reanimated v4 + React 19 + RN 0.81 is a recent matrix; some libraries may have peer-dep warnings. → Mitigation: pin exact versions in the install task; if NativeWind v4 breaks, fall back to v2 (still actively maintained) — note in design rather than re-opening the choice.
+- **Risk**: NativeWind v4 + Reanimated v4 + React 19 + RN 0.81 is a recent matrix; some libraries may have peer-dep warnings. → Mitigation: pin exact versions in the install task; if NativeWind v4 breaks, fall back to v2 (still actively maintained) — note in design rather than re-opening the choice. **Installed note**: `expo install --fix` reported no mismatches; matrix is clean.
+- **Note (D6)**: `react-native-auth0` was bumped from v3 (as originally specified) to **v5.5.1** because v3 and v4 cap their React peer dep at `^18`; v5+ targets `>=19.0.0` matching this project. The v5 `useAuth0()` hook API is compatible with the patterns documented in this design.
+- **Note (D4/D5)**: `zod` resolved to **v4.3.6** (latest), not v3. `@hookform/resolvers@5` supports zod v4 natively. Schemas written for this project target zod v4 API.
+- **Note (D10)**: `tailwindcss@^3` is required as a dev dep alongside NativeWind v4 — NativeWind v4's peer dep is `>3.3.0`, meaning tailwindcss v4 is NOT compatible. Pinned to `^3` in `package.json`.
 - **Risk**: `react-native-auth0` v3 currently still ships some autolinking quirks under Expo prebuild. → Mitigation: use the Expo config plugin in `app.config.ts` so the manifest entries (callback intent-filter for `streetrack://callback` and the SDK-generated `com.streetrack.mobile.auth0://...`) are added automatically.
 - **Risk**: The "in-memory access token + refresh on cold start" pattern adds a launch-time network call before any screen renders. → Mitigation: render the splash screen until `getCredentials()` returns; only then mount routes. Acceptable for Tier 1 because every Tier 1 screen needs auth anyway.
 - **Risk**: Configuration via `app.config.ts` reads environment at *build* time, not run time, so changing `API_BASE_URL` requires a new build. → Mitigation: this is desired (no runtime endpoint switching for a personal app); document the rebuild step in tasks.
