@@ -1,0 +1,98 @@
+---
+description: GSD-style state tracking — maintain STATE.md and per-phase SUMMARY.md to preserve context across sessions. Enforce spec-first and DoD self-check.
+alwaysApply: true
+---
+
+# GSD State Tracking
+
+## STATE.md (always current)
+
+`STATE.md` lives at the project root and is the memory across sessions. Update it at the **start and end of every phase**, and whenever a key decision is made or a blocker is hit.
+
+Required fields:
+
+```markdown
+# Project State
+
+## Current Phase
+Phase 0N — <name> (in progress | complete)
+
+## Last Task Completed
+<short description>
+
+## Next Task
+<short description>
+
+## Key Decisions
+- <decision>: <rationale>
+
+## Blockers
+- <blocker or "none">
+```
+
+Create `STATE.md` if it does not exist before starting phase 01.
+
+## Per-phase SUMMARY.md
+
+At the end of each phase — **before merging** — create `.planning/phase-0N-SUMMARY.md`
+on the phase branch. No phase is complete without its summary. Template:
+
+```markdown
+# Phase 0N — <name>
+
+## What was built
+- <bullet>
+
+## Files changed
+- <file>: <why>
+
+## Decisions made
+- <decision>: <rationale>
+
+## Tests added
+- <test file>: <what it proves>
+
+## Known issues / follow-ups
+- <item or "none">
+```
+
+## Session Start Routine
+
+At the beginning of every session, before writing any code:
+
+1. Read `STATE.md` to resume context.
+2. Read `TECHSPEC.md` §8.2 (plan constraints) and §8.3 (Definition of Done) as
+   a reminder of the workflow requirements.
+3. **Print a session-start summary to the user** in this exact format:
+
+```
+## Session Resumed
+
+- Current phase : Phase NN — <name>
+- Last completed: <last task from STATE.md>
+- Next task     : <next task from STATE.md>
+- Branch        : feature/phase-NN-<slug>  (will create if absent)
+- Spec file     : .planning/phase-NN-SPEC.md  (will create if absent)
+
+Ready to proceed. Confirm?
+```
+
+4. **Wait for explicit user confirmation** before writing any code.
+   This is non-negotiable — skipping this step was the most common failure mode.
+
+## Spec-First Requirement
+
+Per TECHSPEC §2.3 and §8.2: `.planning/phase-0N-SPEC.md` must exist in git
+**before** any implementation code is written. If you are about to write code
+and no spec has been committed, **stop** and create and commit the spec first.
+
+## DoD Self-Check Before Phase Close
+
+Before declaring a phase complete and merging, read TECHSPEC §8.3 and verify
+every bullet is met. For test-related phases, produce a **§1.3 case verification
+table** mapping each applicable test case to its test file. Any unmet criterion
+blocks the merge. Only after all criteria are satisfied:
+
+1. Commit `.planning/phase-0N-SUMMARY.md` on the phase branch.
+2. Update STATE.md to "Phase NN — Complete".
+3. Merge with `--no-ff` per gsd-git-workflow rule.

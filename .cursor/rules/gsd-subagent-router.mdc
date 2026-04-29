@@ -1,0 +1,45 @@
+---
+description: GSD subagent router — when to delegate phase or audit to a focused subagent; uses generic phase runner keyed by project ROADMAP.
+alwaysApply: true
+---
+
+# GSD Subagent Router
+
+When the user asks to **start a GSD phase**, **run bootstrap**, or **run audit**, you can delegate to a **subagent** (MCP task) with a focused prompt and context. The phase structure is **not** hardcoded: it comes from the project's `.planning/phase-00-ROADMAP.md` and TECHSPEC, so the same setup works for any project.
+
+## When to consider delegating
+
+- User says **"GSD session start — Phase NN"** (any number: 01, 02, 03, … 07, …).
+- User says **"GSD session start — Phase NN (bugfix: …)"** — same phase flow; SPEC describes bug (observed vs expected), root cause, and fix approach; tests reproduce bug before fix (red → green). See FRAMEWORK §6.3 and .cursor/gsd/README.md (Bugfixes).
+- User says **"Run bootstrap"** or **"Bootstrap the GSD project"**.
+- User says **"Run audit"** or **"Verify project against TECHSPEC"** or **"TECHSPEC audit"**.
+
+## How to delegate
+
+1. **Choose the subagent file** from `.cursor/gsd/subagents/`:
+   - **Any phase (01, 02, … N)** → `phase.md` (generic). The prompt in phase.md tells the subagent to read **this project's** ROADMAP and TECHSPEC to determine what Phase NN means.
+   - **Bootstrap** → `bootstrap.md`
+   - **Audit** → `audit.md`
+
+2. **Read that file** to get: **Prompt**, **Context to attach**, **Subagent type**.
+
+3. **For phases**: Substitute **NN** in the prompt with the actual phase number the user said (e.g. "Phase 03"). Attach STATE.md, TECHSPEC.md, and **.planning/phase-00-ROADMAP.md** so the subagent can resolve Phase NN for this project.
+
+4. **Call mcp_task** with:
+   - **subagent_type**: `generalPurpose` for bootstrap and phases; `explore` for audit.
+   - **prompt**: The prompt from the subagent file (with NN replaced for phase). Optionally prepend: "You are running in a subagent. Context provided below. " and remind to run pre-flight and wait for user confirmation before code (for phases).
+   - **attachments**: The files listed under "Context to attach" in the subagent file (e.g. TECHSPEC.md, STATE.md, .planning/phase-00-ROADMAP.md, FRAMEWORK.md).
+
+5. **After the subagent returns**: Summarize for the user or surface blockers. If the user must confirm pre-flight in the subagent, say so.
+
+## When not to delegate
+
+- User says "Don't use a subagent" or "Do it here" — run the phase in this chat using the same logic (read ROADMAP + TECHSPEC for Phase NN, then pre-flight, spec, branch, implement, summary, merge).
+- Chat is already mid-phase and user says "Continue" — stay in this chat.
+
+## Reference
+
+- **.cursor/gsd/README.md** — Subagent index and why phase is generic.
+- **FRAMEWORK.md** — Pipeline and prompts.
+- **TECHSPEC.md** §8 — Plan constraints and DoD.
+- **.planning/phase-00-ROADMAP.md** — This project's phase names, goals, and TECHSPEC sections (created at bootstrap).
