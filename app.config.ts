@@ -24,6 +24,7 @@ export default (): ExpoConfig => ({
   plugins: [
     'expo-router',
     'expo-local-authentication',
+    '@react-native-community/datetimepicker',
     [
       'react-native-auth0',
       {
