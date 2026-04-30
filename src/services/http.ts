@@ -26,15 +26,24 @@ export async function authFetch(
   const token = await getAccessToken();
   const url = `${config.apiBaseUrl}/${path.replace(/^\//, '')}`;
 
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      ...(init.headers ?? {}),
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        ...(init.headers ?? {}),
+        Authorization: `Bearer ${token}`,
+      },
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!res.ok) {
     const text = await res.text();
