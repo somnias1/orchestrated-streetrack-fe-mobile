@@ -63,9 +63,16 @@ export function TransactionsListScreen() {
 
   const isCurrentMonth = selected.year === now.year && selected.month === now.month;
 
-  const { data, isLoading, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useInfiniteTransactions(selected);
-    console.log('data', data);
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isFetchNextPageError,
+  } = useInfiniteTransactions(selected);
 
   const items = data?.pages.flatMap((p) => p.items) ?? [];
 
@@ -123,6 +130,13 @@ export function TransactionsListScreen() {
             isFetchingNextPage ? (
               <View className="items-center py-4">
                 <ActivityIndicator size="small" color="#2B7FD4" />
+              </View>
+            ) : isFetchNextPageError ? (
+              <View className="flex-row items-center justify-center gap-2 py-4">
+                <Text className="text-sm text-red-600">Couldn't load more.</Text>
+                <Pressable onPress={() => fetchNextPage()}>
+                  <Text className="text-sm font-medium text-brand-500">Retry</Text>
+                </Pressable>
               </View>
             ) : null
           }
