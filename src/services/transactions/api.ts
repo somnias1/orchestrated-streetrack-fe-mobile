@@ -1,7 +1,7 @@
 /** Transactions API — TECHSPEC §4.1, §4.2 */
 import { authFetch } from '../http';
 import { transactionsPaths } from './constants';
-import type { GetTransactionsResponse, TransactionCreate, TransactionRead, TransactionsListParams } from './types';
+import type { GetTransactionsResponse, TransactionCreate, TransactionRead, TransactionUpdate, TransactionsListParams } from './types';
 
 export async function getTransactions(params: TransactionsListParams): Promise<GetTransactionsResponse> {
   const qs = new URLSearchParams();
@@ -16,10 +16,27 @@ export async function getTransactions(params: TransactionsListParams): Promise<G
   return res.json();
 }
 
+export async function getTransaction(id: string): Promise<TransactionRead> {
+  const res = await authFetch(transactionsPaths.get(id));
+  return res.json();
+}
+
 export async function createTransaction(body: TransactionCreate): Promise<TransactionRead> {
   const res = await authFetch(transactionsPaths.list, {
     method: 'POST',
     body: JSON.stringify(body),
   });
   return res.json();
+}
+
+export async function updateTransaction(id: string, body: TransactionUpdate): Promise<TransactionRead> {
+  const res = await authFetch(transactionsPaths.update(id), {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+  return res.json();
+}
+
+export async function deleteTransaction(id: string): Promise<void> {
+  await authFetch(transactionsPaths.delete(id), { method: 'DELETE' });
 }

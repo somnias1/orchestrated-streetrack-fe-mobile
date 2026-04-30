@@ -1,9 +1,12 @@
 /** Transactions React Query hooks — TECHSPEC §2.2, §7.4, §7.5, §7.6 */
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dashboardQueryKey } from '../dashboard/constants';
 import { DEFAULT_LIST_LIMIT } from '../types';
-import { createTransaction, getTransactions } from './api';
+import { createTransaction, deleteTransaction, getTransaction, getTransactions, updateTransaction } from './api';
 import { transactionsQueryKey } from './constants';
+import type { TransactionUpdate } from './types';
+import type { InfiniteData } from '@tanstack/react-query';
+import type { GetTransactionsResponse } from './types';
 
 function useInvalidateTransactionsAndDashboard() {
   const queryClient = useQueryClient();
@@ -25,10 +28,59 @@ export function useInfiniteTransactions({ year, month }: { year: number; month: 
   });
 }
 
+export function useTransaction(id: string) {
+  return useQuery({
+    queryKey: [transactionsQueryKey, 'detail', id],
+    queryFn: () => getTransaction(id),
+    enabled: !!id,
+  });
+}
+
 export function useCreateTransaction() {
   const invalidate = useInvalidateTransactionsAndDashboard();
   return useMutation({
     mutationFn: createTransaction,
+    onSuccess: invalidate,
+  });
+}
+
+export function useUpdateTransaction() {
+  const invalidate = useInvalidateTransactionsAndDashboard();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string; body: TransactionUpdate }) => updateTransaction(id, body),
+    onSuccess: invalidate,
+  });
+}
+
+export function useDeleteTransaction() {
+  const queryClient = useQueryClient();
+  const invalidate = useInvalidateTransactionsAndDashboard();
+  return useMutation({
+    mutationFn: (id: string) => deleteTransaction(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: [transactionsQueryKey] });
+      const snapshots = new Map<string, InfiniteData<GetTransactionsResponse>>();
+      queryClient.getQueriesData<InfiniteData<GetTransactionsResponse>>({
+        queryKey: [transactionsQueryKey, 'list'],
+      }).forEach(([key, data]) => {
+        if (data) {
+          snapshots.set(JSON.stringify(key), data);
+          queryClient.setQueryData<InfiniteData<GetTransactionsResponse>>(key, {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              items: page.items.filter((t) => t.id !== id),
+            })),
+          });
+        }
+      });
+      return { snapshots };
+    },
+    onError: (_err, _id, context) => {
+      context?.snapshots.forEach((data, keyStr) => {
+        queryClient.setQueryData(JSON.parse(keyStr), data);
+      });
+    },
     onSuccess: invalidate,
   });
 }

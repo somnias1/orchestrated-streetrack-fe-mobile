@@ -1,11 +1,13 @@
-import { useInfiniteTransactions } from '@/services/transactions/queries';
+import { useInfiniteTransactions, useDeleteTransaction } from '@/services/transactions/queries';
 import type { TransactionRead } from '@/services/transactions/types';
 import { formatDate, formatValue } from '@/utils/format';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
+  Modal,
   Pressable,
   Text,
   View,
@@ -33,9 +35,17 @@ function stepMonth(year: number, month: number, delta: 1 | -1) {
   return { year: d.getFullYear(), month: d.getMonth() + 1 };
 }
 
-function TransactionRow({ item }: { item: TransactionRead }) {
+function TransactionRow({
+  item,
+  onPress,
+}: {
+  item: TransactionRead;
+  onPress: (item: TransactionRead) => void;
+}) {
   return (
-    <View className="flex-row items-start border-b border-gray-100 px-4 py-3 last:border-0">
+    <Pressable
+      onPress={() => onPress(item)}
+      className="flex-row items-start border-b border-gray-100 px-4 py-3 last:border-0 active:bg-gray-50">
       <View className="w-16 shrink-0">
         <Text className="text-xs text-gray-400">{formatDate(item.date)}</Text>
       </View>
@@ -52,7 +62,7 @@ function TransactionRow({ item }: { item: TransactionRead }) {
         className={`text-sm font-semibold ${item.value >= 0 ? 'text-green-600' : 'text-red-600'}`}>
         {signedValue(item.value)}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -60,6 +70,9 @@ export function TransactionsListScreen() {
   const router = useRouter();
   const now = currentYearMonth();
   const [selected, setSelected] = useState(now);
+  const [selectedRow, setSelectedRow] = useState<TransactionRead | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isCurrentMonth = selected.year === now.year && selected.month === now.month;
 
@@ -74,7 +87,51 @@ export function TransactionsListScreen() {
     isFetchNextPageError,
   } = useInfiniteTransactions(selected);
 
+  const deleteMutation = useDeleteTransaction();
+
   const items = data?.pages.flatMap((p) => p.items) ?? [];
+
+  useEffect(() => {
+    if (deleteError) {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+      errorTimerRef.current = setTimeout(() => setDeleteError(null), 4000);
+    }
+    return () => {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    };
+  }, [deleteError]);
+
+  const confirmDelete = (id: string) => {
+    Alert.alert('Delete Transaction', 'Are you sure you want to delete this transaction?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteMutation.mutateAsync(id);
+          } catch {
+            setDeleteError("Couldn't delete transaction. Please try again.");
+          }
+        },
+      },
+    ]);
+  };
+
+  const closeActionSheet = () => setSelectedRow(null);
+
+  const handleEdit = () => {
+    if (!selectedRow) return;
+    closeActionSheet();
+    router.push({ pathname: '/transaction-edit/[id]', params: { id: selectedRow.id } });
+  };
+
+  const handleDelete = () => {
+    if (!selectedRow) return;
+    const id = selectedRow.id;
+    closeActionSheet();
+    confirmDelete(id);
+  };
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -96,6 +153,13 @@ export function TransactionsListScreen() {
         </Pressable>
       </View>
 
+      {/* Delete error banner */}
+      {deleteError ? (
+        <View className="bg-red-50 px-4 py-2">
+          <Text className="text-xs text-red-600">{deleteError}</Text>
+        </View>
+      ) : null}
+
       {/* Body */}
       {isLoading && !data ? (
         <View className="flex-1 items-center justify-center">
@@ -112,7 +176,7 @@ export function TransactionsListScreen() {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TransactionRow item={item} />}
+          renderItem={({ item }) => <TransactionRow item={item} onPress={setSelectedRow} />}
           onEndReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
@@ -150,6 +214,37 @@ export function TransactionsListScreen() {
         className="absolute bottom-8 right-6 h-14 w-14 items-center justify-center rounded-full bg-brand-500 shadow-lg">
         <Text className="text-2xl font-light text-white">+</Text>
       </Pressable>
+
+      {/* Action sheet */}
+      <Modal
+        visible={!!selectedRow}
+        transparent
+        animationType="fade"
+        onRequestClose={closeActionSheet}>
+        <Pressable className="flex-1 bg-black/40" onPress={closeActionSheet}>
+          <View className="flex-1" />
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            <View className="mx-4 mb-8 overflow-hidden rounded-2xl bg-white">
+              <View className="border-b border-gray-100 px-4 py-3">
+                <Text className="text-center text-xs text-gray-400" numberOfLines={1}>
+                  {selectedRow?.subcategory_name} · {selectedRow?.date}
+                </Text>
+              </View>
+              <Pressable onPress={handleEdit} className="px-4 py-4 active:bg-gray-50">
+                <Text className="text-center text-base text-gray-900">Edit</Text>
+              </Pressable>
+              <View className="h-px bg-gray-100" />
+              <Pressable onPress={handleDelete} className="px-4 py-4 active:bg-gray-50">
+                <Text className="text-center text-base text-red-600">Delete</Text>
+              </Pressable>
+              <View className="h-px bg-gray-100" />
+              <Pressable onPress={closeActionSheet} className="px-4 py-4 active:bg-gray-50">
+                <Text className="text-center text-base font-medium text-gray-500">Cancel</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
