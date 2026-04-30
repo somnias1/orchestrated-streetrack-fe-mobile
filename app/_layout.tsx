@@ -31,6 +31,7 @@ export default function RootLayout() {
                   <Stack>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                     <Stack.Screen name="transaction-new" options={{ presentation: 'modal', headerShown: false }} />
+                    <Stack.Screen name="transaction-edit/[id]" options={{ presentation: 'modal', headerShown: false }} />
                   </Stack>
                   <StatusBar style="auto" />
                 </BottomSheetModalProvider>
