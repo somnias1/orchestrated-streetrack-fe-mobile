@@ -59,12 +59,12 @@ export function useDeleteTransaction() {
     mutationFn: (id: string) => deleteTransaction(id),
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: [transactionsQueryKey] });
-      const snapshots = new Map<string, InfiniteData<GetTransactionsResponse>>();
+      const snapshots: Array<[readonly unknown[], InfiniteData<GetTransactionsResponse>]> = [];
       queryClient.getQueriesData<InfiniteData<GetTransactionsResponse>>({
         queryKey: [transactionsQueryKey, 'list'],
       }).forEach(([key, data]) => {
         if (data) {
-          snapshots.set(JSON.stringify(key), data);
+          snapshots.push([key, data]);
           queryClient.setQueryData<InfiniteData<GetTransactionsResponse>>(key, {
             ...data,
             pages: data.pages.map((page) => ({
@@ -77,8 +77,8 @@ export function useDeleteTransaction() {
       return { snapshots };
     },
     onError: (_err, _id, context) => {
-      context?.snapshots.forEach((data, keyStr) => {
-        queryClient.setQueryData(JSON.parse(keyStr), data);
+      context?.snapshots.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
       });
     },
     onSuccess: invalidate,
