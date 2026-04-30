@@ -130,7 +130,9 @@ export function TransactionsListScreen() {
     if (!selectedRow) return;
     const id = selectedRow.id;
     closeActionSheet();
-    confirmDelete(id);
+    // Delay Alert until Modal dismiss animation completes — Android drops
+    // Alerts that fire while a Modal is still animating away.
+    setTimeout(() => confirmDelete(id), 350);
   };
 
   return (

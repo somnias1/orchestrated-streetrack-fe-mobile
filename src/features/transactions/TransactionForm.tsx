@@ -119,7 +119,7 @@ export function TransactionForm({
         <Pressable onPress={() => router.back()}>
           <Text className="text-sm text-brand-500">Cancel</Text>
         </Pressable>
-        <Text className="text-base font-semibold text-gray-900">{headerTitle}</Text>
+        <Text className="flex-1 text-center text-base font-semibold text-gray-900" numberOfLines={1}>{headerTitle}</Text>
         {headerExtra ?? <View className="w-12" />}
       </View>
 
