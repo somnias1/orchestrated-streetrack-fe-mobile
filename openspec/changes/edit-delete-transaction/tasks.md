@@ -12,7 +12,7 @@
 - [x] 2.1 Create `src/features/transactions/TransactionForm.tsx` and move the form's JSX, zod schema, `useForm` setup, picker mount logic, and submit-button rendering out of `CreateTransactionScreen`
 - [x] 2.2 Define props: `defaultValues`, `submitLabel`, `headerTitle`, `onSubmit`, `headerExtra?`
 - [x] 2.3 Refactor `CreateTransactionScreen` to import and render `<TransactionForm />`, passing zero-state defaults, `submitLabel="Save transaction"`, `headerTitle="New Transaction"`, and an `onSubmit` that calls `useCreateTransaction`
-- [ ] 2.4 Smoke-test the create flow on device — same fields, same validation, same picker behavior  ← manual
+- [x] 2.4 Smoke-test the create flow on device — same fields, same validation, same picker behavior
 
 ## 3. Edit screen
 
@@ -34,11 +34,11 @@
 
 ## 5. Manual smoke test on device
 
-- [ ] 5.1 Tap a row → action sheet appears with the three options; cancel + backdrop both dismiss
-- [ ] 5.2 Edit flow: tap row → Edit → form is pre-filled → change a field → save → modal closes, list refreshes, dashboard reflects change
-- [ ] 5.3 Edit error path: kill backend, attempt save → modal stays open with inline error
-- [ ] 5.4 Delete from list: tap row → Delete → confirm → row disappears immediately, dashboard refreshes
-- [ ] 5.5 Delete failure: kill backend, attempt delete → row reappears, banner shows error
-- [ ] 5.6 Delete from edit screen: open edit → tap delete → confirm → modal closes, row gone
-- [ ] 5.7 Stale row: open edit on row A, in another client delete row A, return → screen shows "Transaction no longer exists" and back action works
-- [ ] 5.8 Verify no regressions in create flow (still works end-to-end after `TransactionForm` extraction)
+- [x] 5.1 Tap a row → action sheet appears with the three options; cancel + backdrop both dismiss
+- [x] 5.2 Edit flow: tap row → Edit → form is pre-filled → change a field → save → modal closes, list refreshes, dashboard reflects change
+- [x] 5.3 Edit error path: kill backend, attempt save → modal stays open with inline error
+- [x] 5.4 Delete from list: tap row → Delete → confirm → row disappears immediately, dashboard refreshes
+- [x] 5.5 Delete failure: kill backend, attempt delete → row reappears, banner shows error
+- [x] 5.6 Delete from edit screen: open edit → tap delete → confirm → modal closes, row gone
+- [x] 5.7 Stale row: open edit on row A, in another client delete row A, return → screen shows "Transaction no longer exists" and back action works
+- [x] 5.8 Verify no regressions in create flow (still works end-to-end after `TransactionForm` extraction)
