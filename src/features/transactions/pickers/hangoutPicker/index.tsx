@@ -1,15 +1,15 @@
+import { useHangoutsPicker } from '@/services/hangouts/queries';
+import type { HangoutRead } from '@/services/hangouts/types';
 import { useCallback, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import type { HangoutRead } from '@/services/hangouts/types';
-import { useHangoutsPicker } from '@/services/hangouts/queries';
-import { ResourcePicker } from './ResourcePicker';
+import ResourcePicker from '../resourcePicker';
 
 type HangoutPickerProps = {
   onSelect: (hangout: HangoutRead | null) => void;
   onClose: () => void;
 };
 
-export function HangoutPicker({ onSelect, onClose }: HangoutPickerProps) {
+export default function HangoutPicker({ onSelect, onClose }: HangoutPickerProps) {
   const [search, setSearch] = useState('');
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useHangoutsPicker(search || undefined);

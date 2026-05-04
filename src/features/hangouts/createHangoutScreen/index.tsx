@@ -1,8 +1,8 @@
-import { useRouter } from 'expo-router';
 import { useCreateHangout } from '@/services/hangouts/queries';
-import { HangoutForm, defaultHangoutValues, type HangoutFormValues } from './HangoutForm';
+import { useRouter } from 'expo-router';
+import HangoutForm, { defaultHangoutValues, type HangoutFormValues } from '../hangoutForm';
 
-export function CreateHangoutScreen() {
+export default function CreateHangoutScreen() {
   const router = useRouter();
   const mutation = useCreateHangout();
 

@@ -1,4 +1,4 @@
-import { useInfiniteHangouts, useDeleteHangout } from '@/services/hangouts/queries';
+import { useDeleteHangout, useInfiniteHangouts } from '@/services/hangouts/queries';
 import type { HangoutRead } from '@/services/hangouts/types';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -32,7 +32,7 @@ function HangoutRow({
   );
 }
 
-export function HangoutsListScreen() {
+export default function HangoutsListScreen() {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');

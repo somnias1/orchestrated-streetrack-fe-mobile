@@ -1,5 +1,5 @@
 import { AuthGate } from '@/features/auth/AuthGate';
-import { CreateHangoutScreen } from '@/features/hangouts/CreateHangoutScreen';
+import CreateHangoutScreen from '@/features/hangouts/createHangoutScreen';
 
 export default function HangoutNewRoute() {
   return (

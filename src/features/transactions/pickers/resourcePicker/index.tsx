@@ -22,7 +22,7 @@ type ResourcePickerProps<T> = {
   onClose: () => void;
 };
 
-export function ResourcePicker<T extends { id: string }>({
+export default function ResourcePicker<T extends { id: string }>({
   query,
   onQueryChange,
   items,

@@ -1,9 +1,9 @@
 import { useDeleteTransaction, useTransaction, useUpdateTransaction } from '@/services/transactions/queries';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native';
-import { TransactionForm, type TransactionFormValues } from './TransactionForm';
+import TransactionForm, { type TransactionFormValues } from '../transactionForm';
 
-export function EditTransactionScreen() {
+export default function EditTransactionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useTransaction(id);

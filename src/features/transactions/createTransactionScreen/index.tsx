@@ -1,8 +1,8 @@
-import { useRouter } from 'expo-router';
 import { useCreateTransaction } from '@/services/transactions/queries';
-import { TransactionForm, defaultTransactionValues, type TransactionFormValues } from './TransactionForm';
+import { useRouter } from 'expo-router';
+import TransactionForm, { defaultTransactionValues, type TransactionFormValues } from '../transactionForm';
 
-export function CreateTransactionScreen() {
+export default function CreateTransactionScreen() {
   const router = useRouter();
   const mutation = useCreateTransaction();
 

@@ -1,15 +1,15 @@
+import { useSubcategoriesPicker } from '@/services/subcategories/queries';
+import type { SubcategoryRead } from '@/services/subcategories/types';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import type { SubcategoryRead } from '@/services/subcategories/types';
-import { useSubcategoriesPicker } from '@/services/subcategories/queries';
-import { ResourcePicker } from './ResourcePicker';
+import ResourcePicker from '../resourcePicker';
 
 type SubcategoryPickerProps = {
   onSelect: (subcategory: SubcategoryRead) => void;
   onClose: () => void;
 };
 
-export function SubcategoryPicker({ onSelect, onClose }: SubcategoryPickerProps) {
+export default function SubcategoryPicker({ onSelect, onClose }: SubcategoryPickerProps) {
   const [search, setSearch] = useState('');
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useSubcategoriesPicker(search || undefined);

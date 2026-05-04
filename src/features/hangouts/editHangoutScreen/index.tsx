@@ -1,9 +1,9 @@
 import { useDeleteHangout, useHangout, useUpdateHangout } from '@/services/hangouts/queries';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native';
-import { HangoutForm, type HangoutFormValues } from './HangoutForm';
+import HangoutForm, { type HangoutFormValues } from '../hangoutForm';
 
-export function EditHangoutScreen() {
+export default function EditHangoutScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useHangout(id);

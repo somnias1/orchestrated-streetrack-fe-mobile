@@ -1,19 +1,7 @@
 import { useBalance, useDuePeriodicExpenses, useMonthBalance } from '@/services/dashboard/queries';
 import type { DashboardDuePeriodicExpenseRead } from '@/services/dashboard/types';
-import { formatValue } from '@/utils/format';
+import { currentYearMonth, formatValue, monthLabel } from '@/utils/format';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-
-function currentYearMonth() {
-  const now = new Date();
-  return { year: now.getFullYear(), month: now.getMonth() + 1 };
-}
-
-function monthLabel(year: number, month: number): string {
-  return new Date(year, month - 1).toLocaleString(undefined, {
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 function signedBalance(balance: number): string {
   if (balance > 0) return `+${formatValue(balance)}`;
@@ -132,7 +120,7 @@ function PeriodicExpensesSection() {
   );
 }
 
-export function DashboardScreen() {
+export default function DashboardScreen() {
   return (
     <ScrollView className="flex-1 bg-gray-50" contentContainerClassName="gap-4 p-4 pb-8">
       <BalanceSection />

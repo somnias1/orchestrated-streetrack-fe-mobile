@@ -1,5 +1,6 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { todayISO } from '@/utils/format';
 import { zodResolver } from '@hookform/resolvers/zod';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -12,10 +13,6 @@ import {
   View,
 } from 'react-native';
 import { z } from 'zod';
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export const hangoutSchema = z.object({
   name: z.string().min(1, 'Name is required').max(140, 'Max 140 characters'),
@@ -44,7 +41,7 @@ type HangoutFormProps = {
   headerExtra?: React.ReactElement;
 };
 
-export function HangoutForm({
+export default function HangoutForm({
   defaultValues,
   submitLabel,
   headerTitle,

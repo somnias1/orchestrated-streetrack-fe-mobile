@@ -1,5 +1,8 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
+import type { HangoutRead } from '@/services/hangouts/types';
+import type { SubcategoryRead } from '@/services/subcategories/types';
+import { todayISO } from '@/utils/format';
 import { zodResolver } from '@hookform/resolvers/zod';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -12,14 +15,8 @@ import {
   View,
 } from 'react-native';
 import { z } from 'zod';
-import type { SubcategoryRead } from '@/services/subcategories/types';
-import type { HangoutRead } from '@/services/hangouts/types';
-import { HangoutPicker } from './pickers/HangoutPicker';
-import { SubcategoryPicker } from './pickers/SubcategoryPicker';
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import HangoutPicker from '../pickers/hangoutPicker';
+import SubcategoryPicker from '../pickers/subcategoryPicker';
 
 export const transactionSchema = z.object({
   subcategory_id: z.string().uuid('Select a subcategory'),
@@ -61,7 +58,7 @@ type TransactionFormProps = {
   initialHangoutName?: string | null;
 };
 
-export function TransactionForm({
+export default function TransactionForm({
   defaultValues,
   submitLabel,
   headerTitle,

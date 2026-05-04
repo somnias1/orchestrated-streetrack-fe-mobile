@@ -1,6 +1,6 @@
-import { useInfiniteTransactions, useDeleteTransaction } from '@/services/transactions/queries';
+import { useDeleteTransaction, useInfiniteTransactions } from '@/services/transactions/queries';
 import type { TransactionRead } from '@/services/transactions/types';
-import { formatDate, formatValue } from '@/utils/format';
+import { currentYearMonth, formatDate, formatValue, monthLabel } from '@/utils/format';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -12,18 +12,6 @@ import {
   Text,
   View,
 } from 'react-native';
-
-function currentYearMonth() {
-  const now = new Date();
-  return { year: now.getFullYear(), month: now.getMonth() + 1 };
-}
-
-function monthLabel(year: number, month: number): string {
-  return new Date(year, month - 1).toLocaleString(undefined, {
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 function signedValue(value: number): string {
   if (value > 0) return `+${formatValue(value)}`;
@@ -66,7 +54,7 @@ function TransactionRow({
   );
 }
 
-export function TransactionsListScreen() {
+export default function TransactionsListScreen() {
   const router = useRouter();
   const now = currentYearMonth();
   const [selected, setSelected] = useState(now);
