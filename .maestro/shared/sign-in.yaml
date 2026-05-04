@@ -1,0 +1,15 @@
+appId: com.streetrack.mobile
+---
+- launchApp:
+    clearState: false
+# Wait for the app to fully settle from cold start before checking auth state
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+# Only run auth if not already signed in (session may still be active from a prior flow)
+- runFlow:
+    when:
+      visible: "Sign in"
+    file: ./do-auth.yaml
+- extendedWaitUntil:
+    visible: "Dashboard"
+    timeout: 30000

@@ -1,0 +1,80 @@
+appId: com.streetrack.mobile
+---
+- runFlow: ../shared/sign-in.yaml
+
+# Create hangout H1
+- tapOn: "Hangouts"
+- waitForAnimationToEnd
+- tapOn: "+"
+- assertVisible: "New Hangout"
+- tapOn:
+    text: "Hangout name…"
+- inputText: "[E2E-${RUN_ID}] H1"
+- hideKeyboard
+- tapOn: "Save hangout"
+- waitForAnimationToEnd
+- assertVisible: "[E2E-${RUN_ID}] H1"
+
+# Create transaction tagged with H1
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- tapOn: "+"
+- assertVisible: "New Transaction"
+- tapOn: "Select subcategory…"
+- assertVisible: "Select subcategory"
+- inputText: "E2E"
+- assertVisible: "E2E Fixture"
+- tapOn: "E2E Fixture"
+- tapOn:
+    text: "0.00"
+- inputText: "5.00"
+- tapOn:
+    text: "What was this for?"
+- inputText: "[E2E-${RUN_ID}] cross-tx"
+- hideKeyboard
+# Tag with the hangout
+- tapOn: "None"
+- assertVisible: "Select hangout (optional)"
+- assertVisible: "[E2E-${RUN_ID}] H1"
+- tapOn: "[E2E-${RUN_ID}] H1"
+- tapOn: "Save transaction"
+- waitForAnimationToEnd
+
+# Assert transaction shows the hangout name
+- assertVisible: "[E2E-${RUN_ID}] cross-tx"
+- assertVisible: "[E2E-${RUN_ID}] H1"
+
+# Rename H1
+- tapOn: "Hangouts"
+- waitForAnimationToEnd
+- tapOn: "[E2E-${RUN_ID}] H1"
+- tapOn: "Edit"
+- assertVisible: "Edit Hangout"
+- tapOn: "[E2E-${RUN_ID}] H1"
+- eraseText: 50
+- inputText: "[E2E-${RUN_ID}] H1-renamed"
+- hideKeyboard
+- tapOn: "Save changes"
+- waitForAnimationToEnd
+
+# Assert transaction list shows the renamed hangout
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- assertVisible: "[E2E-${RUN_ID}] H1-renamed"
+
+# Delete H1
+- tapOn: "Hangouts"
+- waitForAnimationToEnd
+- tapOn: "[E2E-${RUN_ID}] H1-renamed"
+- tapOn: "Delete"
+- waitForAnimationToEnd
+- tapOn: "Delete"
+- waitForAnimationToEnd
+
+# Transaction row should no longer show the hangout name
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- assertNotVisible: "[E2E-${RUN_ID}] H1-renamed"
+
+# Cleanup
+- runFlow: ../shared/cleanup.yaml

@@ -1,5 +1,5 @@
 import { AuthGate } from '@/features/auth/AuthGate';
-import { EditTransactionScreen } from '@/features/transactions/EditTransactionScreen';
+import EditTransactionScreen from '@/features/transactions/editTransactionScreen';
 
 export default function EditTransactionRoute() {
   return (

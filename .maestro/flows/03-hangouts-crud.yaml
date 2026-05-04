@@ -1,0 +1,41 @@
+appId: com.streetrack.mobile
+---
+- runFlow: ../shared/sign-in.yaml
+- tapOn: "Hangouts"
+- waitForAnimationToEnd
+
+# Create hangout
+- tapOn: "+"
+- assertVisible: "New Hangout"
+- tapOn:
+    text: "Hangout name…"
+- inputText: "[E2E-${RUN_ID}] hangout"
+- hideKeyboard
+- tapOn: "Save hangout"
+- waitForAnimationToEnd
+
+# Assert row appears in list
+- assertVisible: "[E2E-${RUN_ID}] hangout"
+
+# Edit hangout
+- tapOn: "[E2E-${RUN_ID}] hangout"
+- tapOn: "Edit"
+- assertVisible: "Edit Hangout"
+- tapOn: "[E2E-${RUN_ID}] hangout"
+- eraseText: 50
+- inputText: "[E2E-${RUN_ID}] hangout-edited"
+- hideKeyboard
+- tapOn: "Save changes"
+- waitForAnimationToEnd
+- assertVisible: "[E2E-${RUN_ID}] hangout-edited"
+
+# Delete hangout
+- tapOn: "[E2E-${RUN_ID}] hangout-edited"
+- tapOn: "Delete"
+- waitForAnimationToEnd
+- tapOn: "Delete"
+- waitForAnimationToEnd
+- assertNotVisible: "[E2E-${RUN_ID}] hangout-edited"
+
+# Cleanup any remaining E2E entities
+- runFlow: ../shared/cleanup.yaml

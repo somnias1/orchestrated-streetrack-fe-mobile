@@ -1,0 +1,5 @@
+appId: com.streetrack.mobile
+---
+- runFlow: ../shared/sign-in.yaml
+- assertVisible: "Dashboard"
+- assertVisible: "Cumulative balance"

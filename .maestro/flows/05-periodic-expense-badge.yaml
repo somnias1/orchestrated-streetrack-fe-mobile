@@ -1,0 +1,66 @@
+appId: com.streetrack.mobile
+---
+- runFlow: ../shared/sign-in.yaml
+
+# Establish Unpaid baseline: delete any current-month E2E Fixture transactions
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- repeat:
+    while:
+      visible: "E2E Fixture"
+    commands:
+      - tapOn: "E2E Fixture"
+      - assertVisible: "Delete"
+      - tapOn: "Delete"
+      - waitForAnimationToEnd
+      - tapOn: "Delete"
+      - waitForAnimationToEnd
+
+# Confirm Unpaid badge baseline on Dashboard
+- tapOn: "Dashboard"
+- waitForAnimationToEnd
+- assertVisible: "E2E Fixture"
+- assertVisible: "Unpaid"
+
+# Create a transaction tagged with E2E Fixture subcategory
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- tapOn: "+"
+- assertVisible: "New Transaction"
+- tapOn: "Select subcategory…"
+- assertVisible: "Select subcategory"
+- inputText: "E2E"
+- assertVisible: "E2E Fixture"
+- tapOn: "E2E Fixture"
+- tapOn:
+    text: "0.00"
+- inputText: "1.00"
+- tapOn:
+    text: "What was this for?"
+- inputText: "[E2E-${RUN_ID}] periodic-badge"
+- hideKeyboard
+- tapOn: "Save transaction"
+- waitForAnimationToEnd
+
+# Dashboard should now show Paid badge
+- tapOn: "Dashboard"
+- waitForAnimationToEnd
+- assertVisible: "E2E Fixture"
+- assertVisible: "Paid"
+
+# Delete the transaction → badge should revert to Unpaid
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- tapOn: "[E2E-${RUN_ID}] periodic-badge"
+- tapOn: "Delete"
+- waitForAnimationToEnd
+- tapOn: "Delete"
+- waitForAnimationToEnd
+
+- tapOn: "Dashboard"
+- waitForAnimationToEnd
+- assertVisible: "E2E Fixture"
+- assertVisible: "Unpaid"
+
+# Cleanup
+- runFlow: ../shared/cleanup.yaml

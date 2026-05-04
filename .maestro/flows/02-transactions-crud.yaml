@@ -1,0 +1,51 @@
+appId: com.streetrack.mobile
+---
+- runFlow: ../shared/sign-in.yaml
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+
+# Create transaction
+- tapOn: "+"
+- assertVisible: "New Transaction"
+# Select subcategory via picker
+- tapOn: "Select subcategory…"
+- assertVisible: "Select subcategory"
+- inputText: "E2E"
+- assertVisible: "E2E Fixture"
+- tapOn: "E2E Fixture"
+# Fill amount and description
+- tapOn:
+    text: "0.00"
+- inputText: "9.99"
+- tapOn:
+    text: "What was this for?"
+- inputText: "[E2E-${RUN_ID}] desc"
+- hideKeyboard
+- tapOn: "Save transaction"
+- waitForAnimationToEnd
+
+# Assert row appears in list
+- assertVisible: "[E2E-${RUN_ID}] desc"
+
+# Edit transaction
+- tapOn: "[E2E-${RUN_ID}] desc"
+- tapOn: "Edit"
+- assertVisible: "Edit Transaction"
+- tapOn: "[E2E-${RUN_ID}] desc"
+- eraseText: 50
+- inputText: "[E2E-${RUN_ID}] desc-edited"
+- hideKeyboard
+- tapOn: "Save changes"
+- waitForAnimationToEnd
+- assertVisible: "[E2E-${RUN_ID}] desc-edited"
+
+# Delete transaction
+- tapOn: "[E2E-${RUN_ID}] desc-edited"
+- tapOn: "Delete"
+- waitForAnimationToEnd
+- tapOn: "Delete"
+- waitForAnimationToEnd
+- assertNotVisible: "[E2E-${RUN_ID}] desc-edited"
+
+# Cleanup any remaining E2E entities
+- runFlow: ../shared/cleanup.yaml

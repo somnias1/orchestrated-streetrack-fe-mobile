@@ -1,11 +1,7 @@
+import { currentYearMonth } from '@/utils/format';
 import { useQuery } from '@tanstack/react-query';
-import { dashboardQueryKey } from './constants';
 import { getBalance, getDuePeriodicExpenses, getMonthBalance } from './api';
-
-function currentYearMonth() {
-  const now = new Date();
-  return { year: now.getFullYear(), month: now.getMonth() + 1 };
-}
+import { dashboardQueryKey } from './constants';
 
 export function useBalance() {
   return useQuery({

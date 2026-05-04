@@ -1,5 +1,5 @@
 import { AuthGate } from '@/features/auth/AuthGate';
-import { EditHangoutScreen } from '@/features/hangouts/EditHangoutScreen';
+import EditHangoutScreen from '@/features/hangouts/editHangoutScreen';
 
 export default function EditHangoutRoute() {
   return (
