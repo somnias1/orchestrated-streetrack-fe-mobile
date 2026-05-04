@@ -1,0 +1,29 @@
+appId: com.streetrack.mobile
+---
+# Sweep Hangouts tab — delete any row whose name starts with [E2E-
+- tapOn: "Hangouts"
+- waitForAnimationToEnd
+- repeat:
+    while:
+      visible: "[E2E-"
+    commands:
+      - tapOn: "[E2E-"
+      - assertVisible: "Delete"
+      - tapOn: "Delete"
+      - waitForAnimationToEnd
+      - tapOn: "Delete"
+      - waitForAnimationToEnd
+
+# Sweep Transactions tab — delete any row whose description starts with [E2E-
+- tapOn: "Transactions"
+- waitForAnimationToEnd
+- repeat:
+    while:
+      visible: "[E2E-"
+    commands:
+      - tapOn: "[E2E-"
+      - assertVisible: "Delete"
+      - tapOn: "Delete"
+      - waitForAnimationToEnd
+      - tapOn: "Delete"
+      - waitForAnimationToEnd

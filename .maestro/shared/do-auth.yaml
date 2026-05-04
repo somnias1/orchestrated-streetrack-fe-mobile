@@ -1,0 +1,21 @@
+appId: com.streetrack.mobile
+---
+- tapOn: "Sign in"
+# Wait for Auth0 universal-login webview to fully load
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+- tapOn:
+    id: "username"
+    optional: true
+- inputText: ${E2E_USER_EMAIL}
+- tapOn:
+    id: "password"
+    optional: true
+- inputText: ${E2E_USER_PASSWORD}
+- hideKeyboard
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Log In"
+    optional: true
