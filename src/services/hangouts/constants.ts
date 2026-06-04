@@ -7,7 +7,7 @@ export const hangoutsPath = 'hangouts/' as const;
 
 export const hangoutsPaths = {
   list: hangoutsPath,
-  get: (id: string) => `${hangoutsPath}${id}/`,
-  update: (id: string) => `${hangoutsPath}${id}/`,
-  delete: (id: string) => `${hangoutsPath}${id}/`,
+  get: (id: string) => `${hangoutsPath}${id}`,
+  update: (id: string) => `${hangoutsPath}${id}`,
+  delete: (id: string) => `${hangoutsPath}${id}`,
 } as const;
